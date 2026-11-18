@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prototype v1 - Small Business Digital Health Check</title>
+<style>
+:root{--navy:#0F4761;--teal:#1B8A8F;--bg:#F4F7FA;--line:#D6E0E8;--txt:#1F2A33;--muted:#5B6B78;--red:#C0392B;--amber:#D68910;--green:#2E8B57}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--txt);line-height:1.5}
+header{background:var(--navy);color:#fff;padding:22px 20px}header h1{margin:0;font-size:22px}header p{margin:4px 0 0;opacity:.85;font-size:14px}
+main{max-width:760px;margin:0 auto;padding:20px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:16px}
+.area{font-size:13px;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:.04em;margin:22px 0 8px}
+.q{padding:12px 0;border-top:1px solid var(--line)}.q:first-of-type{border-top:0}
+.q p{margin:0 0 8px;font-weight:500}.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opts label{border:1px solid var(--line);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:14px;user-select:none}
+.opts input{display:none}.opts input:checked+span{color:#fff}
+.opts label:has(input:checked){background:var(--navy);border-color:var(--navy);color:#fff}
+.progress{font-size:14px;color:var(--muted);margin-bottom:8px}
+button{background:var(--teal);color:#fff;border:0;border-radius:10px;padding:12px 22px;font-size:16px;font-weight:600;cursor:pointer}
+button.secondary{background:#fff;color:var(--navy);border:1px solid var(--line)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.score{display:flex;align-items:center;gap:20px}.big{font-size:52px;font-weight:700;color:var(--navy);line-height:1}
+.band{display:inline-block;padding:4px 12px;border-radius:999px;color:#fff;font-weight:600;font-size:14px}
+.bars{margin-top:14px}.bar{display:grid;grid-template-columns:150px 1fr 54px;gap:10px;align-items:center;font-size:14px;margin:6px 0}
+.track{background:#E7EEF4;border-radius:6px;height:10px;overflow:hidden}.fill{height:100%;background:var(--teal)}
+ol.actions{padding-left:22px}ol.actions li{margin:10px 0}ol.actions a{color:var(--teal)}
+.note{font-size:13px;color:var(--muted)}.hidden{display:none}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+</style></head><body>
+<header><h1>Small Business Digital Health Check</h1><p>Prototype v1.1 · Group 03 · ITIH101 Project 6 · Answers stay in your browser</p></header>
+<main>
+<div id="quiz">
+ <div class="card"><b>How it works:</b> answer 20 quick questions (Yes, Partly or No). You get a score out of 100 and the five most important things to fix, each linked to official advice. Takes about 5 minutes. No names, passwords or financial details are asked.<br><b>Free, no sales pitch, and nothing you enter is saved or sent anywhere.</b></div>
+ <div class="progress" id="prog"></div>
+ <form id="form" class="card"></form>
+ <button id="go" disabled>See my results</button> <span class="note" id="left"></span>
+</div>
+<div id="result" class="hidden">
+ <div class="card"><div class="score"><div class="big" id="sc"></div><div><div>out of 100</div><span class="band" id="band"></span></div></div>
+  <div class="bars" id="bars"></div></div>
+ <div class="card"><h2 style="margin-top:0;font-size:18px">Your top actions</h2><ol class="actions" id="acts"></ol>
+  <p class="note">This tool is a guide only and is not professional advice. For help, see cyber.gov.au or call 1300 CYBER1 (1300 292 371).</p></div>
+ <div class="btns"><button class="secondary" id="again">Start again</button></div>
+ <p class="note" id="msg"></p>
+</div>
+</main>
+<script>
+const Q=[{"area": "Backups", "q": "Are ALL your important business files backed up at least once a week (not only sales or accounting data)?", "pts": 8, "adv": "Back up every important file weekly, including invoices, quotes and schedules on office computers", "url": "https://www.cyber.gov.au/how-to-guides-for-small-business"}, {"area": "Backups", "q": "Is at least one backup kept away from your main computer (cloud or an unplugged drive)?", "pts": 5, "adv": "Keep one backup in the cloud or on a drive you unplug after use", "url": "https://www.cyber.gov.au/business-government/small-business-cyber-security/small-business-hub/small-business-cyber-security-guide"}, {"area": "Backups", "q": "Have you tried restoring a file from your backup in the last 6 months?", "pts": 5, "adv": "Test your backup by restoring one file", "url": "https://www.cyber.gov.au/how-to-guides-for-small-business"}, {"area": "Software updates", "q": "Are automatic updates turned on for your computers and phones?", "pts": 6, "adv": "Turn on automatic updates on every device", "url": "https://www.cyber.gov.au/updates"}, {"area": "Software updates", "q": "Do you install updates for apps and web browsers when they appear?", "pts": 5, "adv": "Install app and browser updates as soon as they appear", "url": "https://www.cyber.gov.au/updates"}, {"area": "Software updates", "q": "Are all your devices still receiving security updates (none too old)?", "pts": 6, "adv": "Replace devices or software that no longer get security updates", "url": "https://www.cyber.gov.au/updates"}, {"area": "Passwords & MFA", "q": "Is multi-factor authentication (MFA) turned on for your business email?", "pts": 8, "adv": "Turn on MFA for your business email first", "url": "https://www.cyber.gov.au/mfa"}, {"area": "Passwords & MFA", "q": "Is MFA turned on for banking, payment and social media accounts?", "pts": 5, "adv": "Turn on MFA for banking, payments and social media", "url": "https://www.cyber.gov.au/mfa"}, {"area": "Passwords & MFA", "q": "Do you use a different strong passphrase (or a password manager) for each account?", "pts": 4, "adv": "Use long, unique passphrases or a password manager", "url": "https://www.cyber.gov.au/passphrases"}, {"area": "Passwords & MFA", "q": "Does each staff member have their own login, or do you change shared passwords when someone leaves?", "pts": 3, "adv": "Give staff their own logins where possible, and change shared passwords when staff leave", "url": "https://www.cyber.gov.au/business-government/small-business-cyber-security/small-business-hub/small-business-cyber-security-guide"}, {"area": "Scam emails", "q": "Do you and your staff know how to spot a scam email or text?", "pts": 5, "adv": "Learn the signs of scam messages and share them with staff", "url": "https://www.cyber.gov.au/learn-basics/explore-basics/recognise-and-report-scams"}, {"area": "Scam emails", "q": "If a supplier emails new bank details, do you phone them on a known number to check?", "pts": 6, "adv": "Always confirm changed bank details by phone before paying", "url": "https://www.cyber.gov.au/protect-yourself/securing-your-email/email-security/preventing-business-email-compromise"}, {"area": "Scam emails", "q": "Do you know where to report a cyber attack or scam?", "pts": 4, "adv": "Save cyber.gov.au/report and 1300 CYBER1 (1300 292 371)", "url": "https://www.cyber.gov.au/report"}, {"area": "Devices & Wi-Fi", "q": "Is security software (such as antivirus) turned on for your computers?", "pts": 4, "adv": "Turn on built-in or trusted security software", "url": "https://www.cyber.gov.au/business-government/small-business-cyber-security/small-business-hub/small-business-cyber-security-guide"}, {"area": "Devices & Wi-Fi", "q": "Have you changed your router's default password?", "pts": 4, "adv": "Change the router's default username and password", "url": "https://www.cyber.gov.au/protect-yourself/staying-secure-online/secure-your-wifi-and-router"}, {"area": "Devices & Wi-Fi", "q": "Do customers use a separate guest Wi-Fi instead of your business Wi-Fi?", "pts": 3, "adv": "Set up a guest Wi-Fi network for customers", "url": "https://www.cyber.gov.au/protect-yourself/staying-secure-online/secure-your-wifi-and-router"}, {"area": "Devices & Wi-Fi", "q": "Are all phones and computers used for work, including staff's own phones, locked with a PIN or password?", "pts": 4, "adv": "Lock every work device, including personal phones used for work, with a PIN or password", "url": "https://www.cyber.gov.au/business-government/small-business-cyber-security/small-business-hub/small-business-cyber-security-guide"}, {"area": "Online presence", "q": "Are your opening hours, address and phone number correct on Google?", "pts": 5, "adv": "Check and update your Google business listing", "url": "https://www.business.qld.gov.au/running-business/digital-business/websites"}, {"area": "Online presence", "q": "If you have a website, is it up to date and does it show the padlock (https)?", "pts": 5, "adv": "Update your website and make sure it uses https", "url": "https://business.gov.au/online/business-website/set-up-a-business-website"}, {"area": "Online presence", "q": "Is your social media up to date, with no old or hacked pages still showing in search?", "pts": 5, "adv": "Keep one active page with current details, and report or close old or hacked pages", "url": "https://www.business.qld.gov.au/running-business/digital-business/websites"}];
+const VAL={Y:1,P:0.5,N:0};
+const form=document.getElementById('form');let cur='';
+Q.forEach((x,i)=>{if(x.area!==cur){cur=x.area;const h=document.createElement('div');h.className='area';h.textContent=cur;form.appendChild(h)}
+ const d=document.createElement('div');d.className='q';
+ d.innerHTML=`<p>${i+1}. ${x.q}</p><div class="opts">`+['Y','P','N'].map(v=>`<label><input type="radio" name="q${i}" value="${v}"><span>${{Y:'Yes',P:'Partly',N:'No'}[v]}</span></label>`).join('')+`</div>`;form.appendChild(d)});
+function answers(){return Q.map((_,i)=>{const r=form.querySelector(`input[name=q${i}]:checked`);return r?r.value:null})}
+function update(){const a=answers(),n=a.filter(Boolean).length;document.getElementById('prog').textContent=`${n} of ${Q.length} answered`;
+ document.getElementById('go').disabled=n<Q.length;document.getElementById('left').textContent=n<Q.length?`${Q.length-n} left`:''}
+form.addEventListener('change',update);update();
+function score(a){let s=0;const gaps=[];Q.forEach((x,i)=>{const v=VAL[a[i]];s+=x.pts*v;const lost=x.pts*(1-v);if(lost>0)gaps.push({i,lost,pts:x.pts})});
+ gaps.sort((p,q)=>q.lost-p.lost||q.pts-p.pts||p.i-q.i);return{s,top:gaps.slice(0,5)}}
+function band(s){return s>=80?['Good','var(--green)']:s>=50?['Needs work','var(--amber)']:['At risk','var(--red)']}
+document.getElementById('go').addEventListener('click',()=>{const a=answers(),{s,top}=score(a);
+ document.getElementById('sc').textContent=Number.isInteger(s)?s:s.toFixed(1);const [b,c]=band(s);const be=document.getElementById('band');be.textContent=b;be.style.background=c;
+ const areas={};Q.forEach((x,i)=>{areas[x.area]=areas[x.area]||[0,0];areas[x.area][0]+=x.pts*VAL[a[i]];areas[x.area][1]+=x.pts});
+ document.getElementById('bars').innerHTML=Object.entries(areas).map(([k,[g,t]])=>`<div class="bar"><span>${k}</span><div class="track"><div class="fill" style="width:${g/t*100}%"></div></div><span>${Math.round(g/t*100)}%</span></div>`).join('');
+ document.getElementById('acts').innerHTML=top.length?top.map(t=>{const x=Q[t.i];return `<li><b>${x.adv}</b><br><span class="note">From question ${t.i+1} · ${x.area}</span> · <a href="${x.url}" target="_blank" rel="noopener">Official advice</a></li>`}).join(''):'<li>No gaps found. Keep up the good work and re-check every 6 months.</li>';
+ document.getElementById('quiz').classList.add('hidden');document.getElementById('result').classList.remove('hidden');window.scrollTo(0,0)});
+document.getElementById('again').addEventListener('click',()=>{form.reset();update();document.getElementById('result').classList.add('hidden');document.getElementById('quiz').classList.remove('hidden');window.scrollTo(0,0)});
+window.__score=score;
+
+</script></body></html>
