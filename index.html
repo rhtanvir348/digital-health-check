@@ -2,76 +2,239 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Small Business Digital Health Check</title>
 <style>
-:root{--navy:#0F4761;--teal:#1B8A8F;--bg:#F4F7FA;--line:#D6E0E8;--txt:#1F2A33;--muted:#5B6B78;--red:#C0392B;--amber:#D68910;--green:#2E8B57}
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--txt);line-height:1.5}
-header{background:var(--navy);color:#fff;padding:22px 20px}header h1{margin:0;font-size:22px}header p{margin:4px 0 0;opacity:.85;font-size:14px}
-main{max-width:760px;margin:0 auto;padding:20px}
-.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:16px}
-.area{font-size:13px;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:.04em;margin:22px 0 8px}
-.q{padding:12px 0;border-top:1px solid var(--line)}.q:first-of-type{border-top:0}
-.q p{margin:0 0 8px;font-weight:500}.opts{display:flex;gap:8px;flex-wrap:wrap}
-.opts label{border:1px solid var(--line);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:14px;user-select:none}
-.opts input{display:none}.opts input:checked+span{color:#fff}
-.opts label:has(input:checked){background:var(--navy);border-color:var(--navy);color:#fff}
-.progress{font-size:14px;color:var(--muted);margin-bottom:8px}
-button{background:var(--teal);color:#fff;border:0;border-radius:10px;padding:12px 22px;font-size:16px;font-weight:600;cursor:pointer}
-button.secondary{background:#fff;color:var(--navy);border:1px solid var(--line)}
-button:disabled{opacity:.45;cursor:not-allowed}
-.score{display:flex;align-items:center;gap:20px}.big{font-size:52px;font-weight:700;color:var(--navy);line-height:1}
-.band{display:inline-block;padding:4px 12px;border-radius:999px;color:#fff;font-weight:600;font-size:14px}
-.bars{margin-top:14px}.bar{display:grid;grid-template-columns:150px 1fr 54px;gap:10px;align-items:center;font-size:14px;margin:6px 0}
-.track{background:#E7EEF4;border-radius:6px;height:10px;overflow:hidden}.fill{height:100%;background:var(--teal)}
-ol.actions{padding-left:22px}ol.actions li{margin:10px 0}ol.actions a{color:var(--teal)}
-.note{font-size:13px;color:var(--muted)}.hidden{display:none}
-.btns{display:flex;gap:8px;flex-wrap:wrap}
-.date{font-size:13px;color:var(--muted);margin-top:6px}
-@media (max-width:520px){.bar{grid-template-columns:110px 1fr 44px;font-size:13px}.big{font-size:44px}main{padding:12px}.card{padding:14px}}
-@media print{header{background:#fff;color:#000;padding:0 0 8px}header p{color:#333}#quiz,.btns,#msg{display:none!important}body{background:#fff}.card{border:1px solid #999;break-inside:avoid}.fill{-webkit-print-color-adjust:exact;print-color-adjust:exact}.band{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+:root{--bg:#FBF7F0;--card:#fff;--ink:#17203A;--muted:#667089;--line:#ECE6DA;--soft:#F5F0E6;
+--good:#1F9D61;--warn:#E2A11B;--risk:#E2483D;--ac:#4F46E5;--mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);line-height:1.5;background:var(--bg);
+ background-image:radial-gradient(600px 300px at 0% 0%,#E9E7FF 0,transparent 70%),radial-gradient(500px 300px at 100% 0%,#FFE6DC 0,transparent 70%),radial-gradient(600px 400px at 100% 100%,#DDF3EE 0,transparent 70%);background-attachment:fixed}
+button{font:inherit;border:0;cursor:pointer;border-radius:12px;padding:12px 20px;font-weight:600;font-size:15px;transition:transform .1s,background .15s}
+button:active{transform:translateY(1px)}button:disabled{opacity:.4;cursor:not-allowed}
+.primary{background:var(--ac);color:#fff}.primary:hover{filter:brightness(1.08)}
+.dark{background:var(--ink);color:#fff}.ghost{background:transparent;color:var(--ink)}.ghost:hover{background:var(--soft)}
+.outline{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.hidden{display:none!important}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.01em}
+.logo i{width:30px;height:30px;border-radius:9px;display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:5px;background:var(--ink)}
+.logo i b{border-radius:3px}.logo i b:nth-child(1){background:#4F46E5}.logo i b:nth-child(2){background:#F0643C}.logo i b:nth-child(3){background:#0E9F8E}.logo i b:nth-child(4){background:#E2A11B}
+.card{background:var(--card);border-radius:22px;box-shadow:0 1px 0 var(--line),0 20px 40px -28px rgba(23,32,58,.35)}
+
+/* layout shell */
+.app{max-width:1180px;margin:0 auto;padding:24px}
+header.bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+header.bar small{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+/* intro */
+.intro{display:grid;gap:24px;align-items:center}
+.intro .hero{padding:34px}
+.intro h1{font-size:40px;line-height:1.08;letter-spacing:-.03em;margin:12px 0 14px}
+.intro h1 em{font-style:normal;background:linear-gradient(90deg,#4F46E5,#F0643C);-webkit-background-clip:text;background-clip:text;color:transparent}
+.intro p{color:#3E4763;margin:0 0 22px;font-size:17px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.chip{font-size:13px;font-weight:600;padding:6px 12px;border-radius:99px;color:var(--c);background:color-mix(in srgb,var(--c) 12%,#fff)}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.facts div{background:var(--soft);border-radius:16px;padding:14px;font-size:13px;color:var(--muted)}.facts b{display:block;font-size:26px;color:var(--ink);letter-spacing:-.02em}
+.trust{font-size:13px;color:var(--muted);margin-top:18px;padding-top:14px;border-top:1px dashed var(--line)}
+
+/* quiz */
+.quiz{display:grid;gap:20px}
+.side{padding:22px}
+.prog{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.prog .pct{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+.track{flex:1;height:10px;border-radius:99px;background:var(--soft);overflow:hidden;display:flex}
+.track span{height:100%;transition:width .3s}
+.steps{list-style:none;margin:0;padding:0;display:flex;gap:8px}
+.step{flex:1;display:flex;align-items:center;gap:10px;padding:8px;border-radius:14px;cursor:pointer;border:1.5px solid transparent;font-size:14px;color:var(--muted)}
+.step .n{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;flex:none;font-weight:700;font-size:13px;background:color-mix(in srgb,var(--c) 14%,#fff);color:var(--c)}
+.step.done .n{background:var(--c);color:#fff}
+.step.on{border-color:var(--c);color:var(--ink);background:color-mix(in srgb,var(--c) 6%,#fff)}
+.step .t{line-height:1.2}.step .t small{display:block;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.main{padding:28px}
+.ahead{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.ahead .ico{width:46px;height:46px;border-radius:14px;background:var(--ac);display:grid;place-items:center;color:#fff;font-size:22px}
+.ahead h2{margin:0;font-size:26px;letter-spacing:-.02em}
+.qs{display:grid;gap:14px;margin-top:20px}
+.q{border:1.5px solid var(--line);border-radius:18px;padding:18px;transition:border-color .2s;position:relative}
+.q.answered{border-color:color-mix(in srgb,var(--ac) 45%,#fff)}
+.q .num{font-family:var(--mono);font-size:11px;color:var(--ac);font-weight:700;letter-spacing:.08em}
+.q p{margin:4px 0 14px;font-size:16px;font-weight:500}
+.opts{display:flex;gap:8px}
+.opt{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;font-weight:600;font-size:15px;user-select:none;transition:all .15s;background:#fff}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt:hover{border-color:#D6CEC0}
+.opt:has(input:focus-visible){outline:3px solid color-mix(in srgb,var(--ac) 40%,#fff);outline-offset:2px}
+.opt[data-v=Y]:has(input:checked){background:#E6F6EE;border-color:var(--good);color:#11683F}
+.opt[data-v=P]:has(input:checked){background:#FDF3DF;border-color:var(--warn);color:#8A5D05}
+.opt[data-v=N]:has(input:checked){background:#FDE8E6;border-color:var(--risk);color:#A4261D}
+.nav{display:flex;align-items:center;gap:10px;margin-top:22px}
+.nav .left{margin-right:auto;font-size:13px;color:var(--muted)}
+
+/* result */
+.res{display:grid;gap:20px}
+.scorecard{padding:28px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.ring{--p:50;--c:var(--risk);width:200px;height:200px;border-radius:50%;margin:14px 0;display:grid;place-items:center;
+ background:conic-gradient(var(--c) calc(var(--p)*1%),var(--soft) 0)}
+.ring>div{width:156px;height:156px;border-radius:50%;background:#fff;display:grid;place-items:center;align-content:center}
+.big{font-size:52px;font-weight:800;letter-spacing:-.04em;line-height:1}.ring small{color:var(--muted);font-size:13px}
+.band{font-weight:700;font-size:14px;padding:6px 14px;border-radius:99px;color:#fff}
+.date{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:10px}
+.panel{padding:24px}.panel h3{margin:0 0 14px;font-size:17px}
+.barrow{display:grid;grid-template-columns:140px 1fr 44px;gap:10px;align-items:center;font-size:14px;margin:10px 0}
+.barrow .tr{height:10px;border-radius:99px;background:var(--soft);overflow:hidden}.barrow .fl{height:100%;border-radius:99px}
+.barrow span:last-child{text-align:right;font-family:var(--mono);font-size:12px;color:var(--muted)}
+ol.actions{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:a}
+ol.actions li{counter-increment:a;display:grid;grid-template-columns:36px 1fr;gap:12px;padding:14px;border-radius:16px;background:color-mix(in srgb,var(--c) 7%,#fff);border-left:4px solid var(--c)}
+ol.actions li:before{content:counter(a);width:32px;height:32px;border-radius:10px;background:var(--c);color:#fff;display:grid;place-items:center;font-weight:700}
+ol.actions li.none{grid-template-columns:1fr;--c:var(--good)}ol.actions li.none:before{display:none}
+ol.actions b{display:block;font-size:15px;line-height:1.35;margin-bottom:2px}ol.actions a{color:var(--c);font-weight:700}
+.note{font-size:13px;color:var(--muted)}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.foot{text-align:center;font-size:12px;color:var(--muted);margin:26px 0 8px}
+
+/* ===== PHONE (< 640px): one column, sticky progress, sticky bottom buttons ===== */
+@media (max-width:639px){
+ .app{padding:14px 12px 96px}
+ header.bar{margin-bottom:14px}
+ .intro .hero{padding:24px 20px}.intro h1{font-size:30px}.intro p{font-size:16px}
+ .facts b{font-size:22px}
+ .side{position:sticky;top:0;z-index:5;border-radius:0 0 18px 18px;margin:-14px -12px 0;padding:14px 16px 12px}
+ .steps{gap:5px}.step{padding:0;border:0;background:none!important;flex-direction:column;gap:0}.step .t{display:none}
+ .step .n{width:100%;height:8px;border-radius:99px;font-size:0}.step.on .n{background:var(--c);opacity:.55}.step.done .n{opacity:1}
+ .prog{margin-bottom:10px}
+ .main{padding:18px 16px;border-radius:20px}.ahead h2{font-size:21px}.ahead .ico{width:38px;height:38px;font-size:18px}
+ .q{padding:14px}.q p{font-size:15px}
+ .opts{flex-direction:column}.opt{justify-content:flex-start;padding:12px 14px}
+ .opt:before{content:"";width:18px;height:18px;border-radius:50%;border:2px solid #B9B2A5;flex:none}
+ .opt:has(input:checked):before{border-color:currentColor;background:radial-gradient(currentColor 0 4px,transparent 5px)}
+ .nav{position:fixed;left:0;right:0;bottom:0;z-index:6;margin:0;padding:12px 14px calc(12px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line)}
+ .nav button{flex:1}.nav .left{display:none}
+ .ring{width:170px;height:170px}.ring>div{width:132px;height:132px}.big{font-size:44px}
+ .barrow{grid-template-columns:112px 1fr 38px;font-size:13px}
+ .btns button{flex:1}.btns #print{flex-basis:100%}
+}
+/* ===== TABLET / iPad (640–1023px): stepper on top, questions in 2 columns ===== */
+@media (min-width:640px) and (max-width:1023px){
+ .intro{grid-template-columns:1fr}.intro h1{font-size:38px}
+ .steps{flex-wrap:wrap}.step{flex:1 1 30%}
+ .qs{grid-template-columns:1fr 1fr}.q:last-child:nth-child(odd){grid-column:1/-1}
+ .q{display:flex;flex-direction:column}.q p{flex:1}
+ .res{grid-template-columns:1fr 1fr}.res .actpanel{grid-column:1/-1}
+ .nav{justify-content:flex-end}
+}
+/* ===== DESKTOP / laptop (>= 1024px): sidebar stepper + wide content; dashboard results ===== */
+@media (min-width:1024px){
+ .intro{grid-template-columns:1.25fr 1fr}
+ .intro .art{display:grid!important}
+ .quiz{grid-template-columns:290px 1fr;align-items:start}
+ .side{position:sticky;top:24px}
+ .steps{flex-direction:column;gap:6px;margin-top:6px}
+ .prog{flex-direction:column;align-items:stretch;gap:8px}.prog .track{flex:none;height:10px}
+ .qs{grid-template-columns:1fr}
+ .q{display:grid;grid-template-columns:1fr 330px;gap:20px;align-items:center}.q p{margin:4px 0 0}
+ .res{grid-template-columns:340px 1fr;align-items:start}
+ .res .scorecard{grid-row:span 2;position:sticky;top:24px}
+}
+.art{display:none;padding:26px;gap:12px}
+.art .tile{border-radius:18px;padding:16px;color:#fff;display:flex;justify-content:space-between;align-items:center;font-weight:600}
+.art .tile small{font-family:var(--mono);font-size:12px;opacity:.85}
+@media print{body{background:#fff}header.bar,#intro,#quiz,.btns,#msg,.foot{display:none!important}.card{box-shadow:none;border:1px solid #bbb}
+ .res{grid-template-columns:1fr!important}.res .scorecard{position:static}
+ .ring,.band,.fl,ol.actions li,ol.actions li:before{-webkit-print-color-adjust:exact;print-color-adjust:exact}ol.actions li{break-inside:avoid}}
 </style></head><body>
-<header><h1>Small Business Digital Health Check</h1><p>Prototype v1.3 · Group 03 · ITIH101 Project 6 · Answers stay in your browser</p></header>
-<main>
-<div id="quiz">
- <div class="card"><b>How it works:</b> answer 20 quick questions (Yes, Partly or No). You get a score out of 100 and the five most important things to fix, each linked to official advice. Takes about 5 minutes. No names, passwords or financial details are asked.<br><b>Free, no sales pitch, and nothing you enter is saved or sent anywhere.</b></div>
- <div class="progress" id="prog"></div>
- <form id="form" class="card"></form>
- <button id="go" disabled>See my results</button> <span class="note" id="left"></span>
+<div class="app">
+ <header class="bar"><div class="logo"><i><b></b><b></b><b></b><b></b></i>Digital Health Check</div><small>v1.4 · Group 03</small></header>
+
+ <section id="intro" class="intro">
+  <div class="card hero">
+   <div class="kicker">Free check for small businesses</div>
+   <h1>How safe is your business <em>online?</em></h1>
+   <p>Answer 20 quick questions about backups, passwords, scams, devices and your online presence. You get a score out of 100 and the five most important things to fix, each linked to official advice.</p>
+   <div class="chips" id="chips"></div>
+   <div class="facts"><div><b>20</b>questions</div><div><b>~5</b>minutes</div><div><b>0</b>data saved</div></div>
+   <div class="btns"><button class="dark" id="start">Start the check →</button></div>
+   <p class="trust">Free, no sales pitch, and nothing you enter is saved or sent anywhere. No names, passwords or financial details are asked.</p>
+  </div>
+  <div class="card art" id="art"></div>
+ </section>
+
+ <section id="quiz" class="quiz hidden">
+  <aside class="card side">
+   <div class="prog"><div class="track" id="track"></div><span class="pct" id="prog"></span></div>
+   <ol class="steps" id="steps"></ol>
+  </aside>
+  <div class="card main">
+   <div class="ahead"><div class="ico" id="aico"></div><div><div class="kicker" id="apage"></div><h2 id="aname"></h2></div></div>
+   <form id="form" onsubmit="return false"></form>
+   <div class="nav"><span class="left" id="left"></span><button type="button" class="ghost" id="back">← Back</button><button type="button" class="primary" id="next">Next →</button><button type="button" class="primary hidden" id="go" disabled>See my results</button></div>
+  </div>
+ </section>
+
+ <section id="result" class="res hidden">
+  <div class="card scorecard"><div class="kicker">Your digital health score</div>
+   <div class="ring" id="ring"><div><span class="big" id="sc"></span><small>out of 100</small></div></div>
+   <span class="band" id="band"></span><div class="date" id="date"></div>
+   <div class="btns" style="justify-content:center"><button class="dark" id="print">Print / save as PDF</button><button class="outline" id="copy">Copy results</button><button class="ghost" id="again">Start again</button></div>
+   <p class="note" id="msg"></p></div>
+  <div class="card panel"><h3>By area</h3><div id="bars"></div></div>
+  <div class="card panel actpanel"><h3>Your top actions</h3><ol class="actions" id="acts"></ol>
+   <p class="note" style="margin:16px 0 0">This tool is a guide only and is not professional advice. For help, see cyber.gov.au or call 1300 CYBER1 (1300 292 371).</p></div>
+ </section>
+ <p class="foot">ITIH101 Innovation Hub · Group 03 · Answers stay in your browser</p>
 </div>
-<div id="result" class="hidden">
- <div class="card"><div class="score"><div class="big" id="sc"></div><div><div>out of 100</div><span class="band" id="band"></span></div></div>
-  <div class="bars" id="bars"></div><div class="date" id="date"></div></div>
- <div class="card"><h2 style="margin-top:0;font-size:18px">Your top actions</h2><ol class="actions" id="acts"></ol>
-  <p class="note">This tool is a guide only and is not professional advice. For help, see cyber.gov.au or call 1300 CYBER1 (1300 292 371).</p></div>
- <div class="btns"><button id="print">Print / save as PDF</button> <button class="secondary" id="copy">Copy results</button> <button class="secondary" id="again">Start again</button></div>
- <p class="note" id="msg"></p>
-</div>
-</main>
 <script>
 const Q=[{"area": "Backups", "q": "Are ALL your important business files backed up at least once a week (not only sales or accounting data)?", "pts": 8, "adv": "Back up every important file weekly, including invoices, quotes and schedules on office computers", "url": "https://www.cyber.gov.au/publication/small-business-cyber-security-handbook/protecting-devices-systems-and-networks"}, {"area": "Backups", "q": "Is at least one backup kept away from your main computer (cloud or an unplugged drive)?", "pts": 5, "adv": "Keep one backup in the cloud or on a drive you unplug after use", "url": "https://www.cyber.gov.au/publication/small-business-cyber-security-handbook/protecting-devices-systems-and-networks"}, {"area": "Backups", "q": "Have you tried restoring a file from your backup in the last 6 months?", "pts": 5, "adv": "Test your backup by restoring one file", "url": "https://www.cyber.gov.au/publication/small-business-cyber-security-handbook/protecting-devices-systems-and-networks"}, {"area": "Software updates", "q": "Are automatic updates turned on for your computers and phones?", "pts": 6, "adv": "Turn on automatic updates on every device", "url": "https://www.cyber.gov.au/publication/small-business-cyber-security-handbook/implement-fundamental-cyber-security-controls"}, {"area": "Software updates", "q": "Do you install updates for apps and web browsers when they appear?", "pts": 5, "adv": "Install app and browser updates as soon as they appear", "url": "https://www.cyber.gov.au/publication/small-business-cyber-security-handbook/implement-fundamental-cyber-security-controls"}, {"area": "Software updates", "q": "Are all your devices still receiving security updates (none too old)?", "pts": 6, "adv": "Replace devices or software that no longer get security updates", "url": "https://www.cyber.gov.au/publication/small-business-cyber-security-handbook/implement-fundamental-cyber-security-controls"}, {"area": "Passwords & MFA", "q": "Is multi-factor authentication (MFA) turned on for your business email?", "pts": 8, "adv": "Turn on MFA for your business email first", "url": "https://www.cyber.gov.au/publication/small-business-cyber-security-handbook/securing-accounts-and-identities"}, {"area": "Passwords & MFA", "q": "Is MFA turned on for banking, payment and social media accounts?", "pts": 5, "adv": "Turn on MFA for banking, payments and social media", "url": "https://www.cyber.gov.au/publication/small-business-cyber-security-handbook/securing-accounts-and-identities"}, {"area": "Passwords & MFA", "q": "Do you use a different strong passphrase (or a password manager) for each account?", "pts": 4, "adv": "Use long, unique passphrases or a password manager", "url": "https://www.cyber.gov.au/publication/small-business-cyber-security-handbook/securing-accounts-and-identities"}, {"area": "Passwords & MFA", "q": "Does each staff member have their own login, or do you change shared passwords when someone leaves?", "pts": 3, "adv": "Give staff their own logins where possible, and change shared passwords when staff leave", "url": "https://www.cyber.gov.au/publication/small-business-cyber-security-handbook/restrict-and-monitor-access"}, {"area": "Scam emails", "q": "Do you and your staff know how to spot a scam email or text?", "pts": 5, "adv": "Learn the signs of scam messages and share them with staff", "url": "https://www.cyber.gov.au/publication/small-business-cyber-security-handbook/common-cyber-threats-to-small-businesses"}, {"area": "Scam emails", "q": "If a supplier emails new bank details, do you phone them on a known number to check?", "pts": 6, "adv": "Always confirm changed bank details by phone before paying", "url": "https://www.cyber.gov.au/publication/protecting-against-business-email-compromise"}, {"area": "Scam emails", "q": "Do you know where to report a cyber attack or scam?", "pts": 4, "adv": "Save cyber.gov.au/report and 1300 CYBER1 (1300 292 371)", "url": "https://www.cyber.gov.au/report"}, {"area": "Devices & Wi-Fi", "q": "Is security software (such as antivirus) turned on for your computers?", "pts": 4, "adv": "Turn on built-in or trusted security software", "url": "https://www.cyber.gov.au/publication/small-business-cyber-security-handbook/protecting-devices-systems-and-networks"}, {"area": "Devices & Wi-Fi", "q": "Have you changed your router's default password?", "pts": 4, "adv": "Change the router's default username and password", "url": "https://www.cyber.gov.au/publication/small-business-cyber-security-handbook/protecting-devices-systems-and-networks"}, {"area": "Devices & Wi-Fi", "q": "Do customers use a separate guest Wi-Fi instead of your business Wi-Fi?", "pts": 3, "adv": "Set up a guest Wi-Fi network for customers", "url": "https://www.cyber.gov.au/publication/small-business-cyber-security-handbook/protecting-devices-systems-and-networks"}, {"area": "Devices & Wi-Fi", "q": "Are all phones and computers used for work, including staff's own phones, locked with a PIN or password?", "pts": 4, "adv": "Lock every work device, including personal phones used for work, with a PIN or password", "url": "https://www.cyber.gov.au/publication/small-business-cyber-security-handbook/protecting-devices-systems-and-networks"}, {"area": "Online presence", "q": "Are your opening hours, address and phone number correct on Google?", "pts": 5, "adv": "Check and update your Google business listing", "url": "https://www.business.qld.gov.au/running-business/marketing-sales/marketing/websites-social-media"}, {"area": "Online presence", "q": "If you have a website, is it up to date and does it show the padlock (https)?", "pts": 5, "adv": "Update your website and make sure it uses https", "url": "https://business.gov.au/online-and-digital/business-website/set-up-a-business-website"}, {"area": "Online presence", "q": "Is your social media up to date, with no old or hacked pages still showing in search?", "pts": 5, "adv": "Keep one active page with current details, and report or close old or hacked pages", "url": "https://www.business.qld.gov.au/running-business/marketing-sales/marketing/websites-social-media/social-media"}];
 const VAL={Y:1,P:0.5,N:0};
-const form=document.getElementById('form');let cur='';
-Q.forEach((x,i)=>{if(x.area!==cur){cur=x.area;const h=document.createElement('div');h.className='area';h.textContent=cur;form.appendChild(h)}
- const d=document.createElement('div');d.className='q';
- d.innerHTML=`<p>${i+1}. ${x.q}</p><div class="opts">`+['Y','P','N'].map(v=>`<label><input type="radio" name="q${i}" value="${v}"><span>${{Y:'Yes',P:'Partly',N:'No'}[v]}</span></label>`).join('')+`</div>`;form.appendChild(d)});
+const AREAS=[...new Set(Q.map(x=>x.area))];
+const COL={"Backups":"#4F46E5","Software updates":"#0E9F8E","Passwords & MFA":"#8B5CF6","Scam emails":"#F0643C","Devices & Wi-Fi":"#E2A11B","Online presence":"#2D8CDB"};
+const ICO={"Backups":"⛁","Software updates":"⟳","Passwords & MFA":"⚿","Scam emails":"✉","Devices & Wi-Fi":"⌁","Online presence":"◎"};
+const form=document.getElementById('form');let page=0,seen=0;
+document.getElementById('chips').innerHTML=AREAS.map(a=>`<span class="chip" style="--c:${COL[a]}">${a}</span>`).join('');
+document.getElementById('art').innerHTML=AREAS.map(a=>`<div class="tile" style="background:${COL[a]}"><span>${ICO[a]}&nbsp; ${a}</span><small>${Q.filter(x=>x.area===a).length} questions</small></div>`).join('');
+AREAS.forEach((ar,p)=>{const fs=document.createElement('fieldset');fs.className='pg hidden';fs.style.cssText='border:0;margin:0;padding:0';fs.dataset.p=p;
+ fs.innerHTML='<div class="qs">'+Q.map((x,i)=>x.area!==ar?'':`<div class="q" data-i="${i}"><div><span class="num">QUESTION ${String(i+1).padStart(2,'0')}</span><p>${x.q}</p></div><div class="opts">`+
+ ['Y','P','N'].map(v=>`<label class="opt" data-v="${v}"><input type="radio" name="q${i}" value="${v}">${{Y:'Yes',P:'Partly',N:'No'}[v]}</label>`).join('')+`</div></div>`).join('')+'</div>';form.appendChild(fs)});
+document.getElementById('steps').innerHTML=AREAS.map((a,p)=>`<li class="step" data-p="${p}" style="--c:${COL[a]}"><span class="n">${p+1}</span><span class="t">${a}<small id="sc${p}"></small></span></li>`).join('');
+document.getElementById('track').innerHTML=AREAS.map(a=>`<span style="background:${COL[a]};width:0"></span>`).join('');
 function answers(){return Q.map((_,i)=>{const r=form.querySelector(`input[name=q${i}]:checked`);return r?r.value:null})}
-function update(){const a=answers(),n=a.filter(Boolean).length;document.getElementById('prog').textContent=`${n} of ${Q.length} answered`;
- document.getElementById('go').disabled=n<Q.length;document.getElementById('left').textContent=n<Q.length?`${Q.length-n} left`:''}
-form.addEventListener('change',update);update();
+function idx(p){return Q.map((x,i)=>x.area===AREAS[p]?i:-1).filter(i=>i>=0)}
+function show(p){page=Math.max(0,Math.min(AREAS.length-1,p));seen=Math.max(seen,page);const ar=AREAS[page];
+ form.querySelectorAll('.pg').forEach(f=>f.classList.toggle('hidden',+f.dataset.p!==page));
+ document.documentElement.style.setProperty('--ac',COL[ar]);
+ document.getElementById('aico').textContent=ICO[ar];document.getElementById('aname').textContent=ar;
+ document.getElementById('apage').textContent=`Part ${page+1} of ${AREAS.length}`;update()}
+function update(){const a=answers(),n=a.filter(Boolean).length,last=page===AREAS.length-1;
+ document.getElementById('prog').textContent=`${n} of ${Q.length} answered`;
+ document.querySelectorAll('#track span').forEach((s,k)=>{s.style.width=(idx(k).filter(i=>a[i]).length/Q.length*100)+'%'});
+ document.querySelectorAll('.step').forEach((s,k)=>{const ids=idx(k),d=ids.filter(i=>a[i]).length;s.classList.toggle('on',k===page);s.classList.toggle('done',d===ids.length);document.getElementById('sc'+k).textContent=`${d}/${ids.length} answered`});
+ form.querySelectorAll('.q').forEach(q=>q.classList.toggle('answered',!!a[+q.dataset.i]));
+ const left=idx(page).filter(i=>!a[i]).length;
+ document.getElementById('left').textContent=left?`${left} left on this page`:'Page complete ✓';
+ document.getElementById('back').style.visibility=page?'visible':'hidden';
+ document.getElementById('next').classList.toggle('hidden',last);document.getElementById('go').classList.toggle('hidden',!last);
+ document.getElementById('next').disabled=left>0;document.getElementById('go').disabled=n<Q.length;
+ document.getElementById('go').title=n<Q.length?`${Q.length-n} question(s) still unanswered`:''}
+form.addEventListener('change',update);
+document.getElementById('steps').addEventListener('click',e=>{const s=e.target.closest('.step');if(s&&+s.dataset.p<=seen){show(+s.dataset.p);document.getElementById('quiz').scrollIntoView({behavior:'smooth'})}});
+document.getElementById('next').addEventListener('click',()=>{show(page+1);window.scrollTo(0,0)});
+document.getElementById('back').addEventListener('click',()=>{show(page-1);window.scrollTo(0,0)});
+document.getElementById('start').addEventListener('click',()=>{document.getElementById('intro').classList.add('hidden');document.getElementById('quiz').classList.remove('hidden');show(0);window.scrollTo(0,0)});
 function score(a){let s=0;const gaps=[];Q.forEach((x,i)=>{const v=VAL[a[i]];s+=x.pts*v;const lost=x.pts*(1-v);if(lost>0)gaps.push({i,lost,pts:x.pts})});
  gaps.sort((p,q)=>q.lost-p.lost||q.pts-p.pts||p.i-q.i);return{s,top:gaps.slice(0,5)}}
-function band(s){return s>=80?['Good','var(--green)']:s>=50?['Needs work','var(--amber)']:['At risk','var(--red)']}
+function band(s){return s>=80?['Good','var(--good)']:s>=50?['Needs work','var(--warn)']:['At risk','var(--risk)']}
 document.getElementById('go').addEventListener('click',()=>{const a=answers(),{s,top}=score(a);
  document.getElementById('sc').textContent=Number.isInteger(s)?s:s.toFixed(1);const [b,c]=band(s);const be=document.getElementById('band');be.textContent=b;be.style.background=c;
+ const r=document.getElementById('ring');r.style.setProperty('--p',s);r.style.setProperty('--c',c);
  const areas={};Q.forEach((x,i)=>{areas[x.area]=areas[x.area]||[0,0];areas[x.area][0]+=x.pts*VAL[a[i]];areas[x.area][1]+=x.pts});
- document.getElementById('bars').innerHTML=Object.entries(areas).map(([k,[g,t]])=>`<div class="bar"><span>${k}</span><div class="track"><div class="fill" style="width:${g/t*100}%"></div></div><span>${Math.round(g/t*100)}%</span></div>`).join('');
- document.getElementById('acts').innerHTML=top.length?top.map(t=>{const x=Q[t.i];return `<li><b>${x.adv}</b><br><span class="note">From question ${t.i+1} · ${x.area}</span> · <a href="${x.url}" target="_blank" rel="noopener">Official advice</a></li>`}).join(''):'<li>No gaps found. Keep up the good work and re-check every 6 months.</li>';
- document.getElementById('date').textContent='Checked on '+new Date().toLocaleDateString(undefined,{day:'numeric',month:'long',year:'numeric'});document.getElementById('msg').textContent='';document.getElementById('quiz').classList.add('hidden');document.getElementById('result').classList.remove('hidden');window.scrollTo(0,0)});
-document.getElementById('again').addEventListener('click',()=>{form.reset();update();document.getElementById('result').classList.add('hidden');document.getElementById('quiz').classList.remove('hidden');window.scrollTo(0,0)});
+ document.getElementById('bars').innerHTML=Object.entries(areas).map(([k,[g,t]])=>`<div class="barrow"><span>${k}</span><div class="tr"><div class="fl" style="width:${g/t*100}%;background:${COL[k]}"></div></div><span>${Math.round(g/t*100)}%</span></div>`).join('');
+ document.getElementById('acts').innerHTML=top.length?top.map(t=>{const x=Q[t.i];return `<li style="--c:${COL[x.area]}"><div><b>${x.adv}</b><span class="note">From question ${t.i+1} · ${x.area}</span> · <a href="${x.url}" target="_blank" rel="noopener">Official advice</a></div></li>`}).join(''):'<li class="none"><div><b>No gaps found.</b><span class="note">Keep up the good work and re-check every 6 months.</span></div></li>';
+ document.getElementById('date').textContent='Checked on '+new Date().toLocaleDateString(undefined,{day:'numeric',month:'long',year:'numeric'});document.getElementById('msg').textContent='';
+ document.getElementById('quiz').classList.add('hidden');document.getElementById('result').classList.remove('hidden');window.scrollTo(0,0)});
+document.getElementById('again').addEventListener('click',()=>{form.reset();seen=0;document.getElementById('result').classList.add('hidden');document.getElementById('quiz').classList.remove('hidden');show(0);window.scrollTo(0,0)});
 window.__score=score;
 function resultText(){const lines=['Small Business Digital Health Check – results','Score: '+document.getElementById('sc').textContent+'/100 ('+document.getElementById('band').textContent+')',document.getElementById('date').textContent,'','By area:'];
- document.querySelectorAll('#bars .bar').forEach(b=>{const c=b.querySelectorAll('span');lines.push('- '+c[0].textContent+': '+c[1].textContent)});
- lines.push('','Top actions:');document.querySelectorAll('#acts li').forEach((li,i)=>{const a=li.querySelector('a');lines.push((i+1)+'. '+li.querySelector('b,li').textContent+(a?' – '+a.href:''))});
+ document.querySelectorAll('#bars .barrow').forEach(b=>{const c=b.querySelectorAll(':scope > span');lines.push('- '+c[0].textContent+': '+c[1].textContent)});
+ lines.push('','Top actions:');document.querySelectorAll('#acts li').forEach((li,i)=>{const a=li.querySelector('a');lines.push((i+1)+'. '+li.querySelector('b').textContent+(a?' – '+a.href:''))});
  lines.push('','This tool is a guide only and is not professional advice.');return lines.join('\n')}
 document.getElementById('print').addEventListener('click',()=>{try{window.print()}catch(e){}setTimeout(()=>{document.getElementById('msg').textContent='If no print window opened, use your browser menu: Print, then "Save as PDF". Or use Copy results.'},400)});
 document.getElementById('copy').addEventListener('click',async()=>{const m=document.getElementById('msg');try{await navigator.clipboard.writeText(resultText());m.textContent='Results copied. Paste them into an email or document.'}catch(e){m.textContent='Copy was blocked by the browser. Select the results on screen and copy them manually.'}});
-
 </script></body></html>
